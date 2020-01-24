@@ -135,6 +135,7 @@ BOOL CCreateBranchTagDlg::OnInitDialog()
 	m_tooltips.Activate(TRUE);
 
 	OnCbnSelchangeComboboxexBranch();
+	SetTheme(CTheme::Instance().IsDarkTheme());
 	return TRUE;
 }
 // CCreateBranchTagDlg message handlers

@@ -198,6 +198,7 @@ BOOL CCloneDlg::OnInitDialog()
 	OnBnClickedCheckDepth();
 	OnBnClickedCheckBranch();
 	OnBnClickedCheckOrigin();
+	SetTheme(CTheme::Instance().IsDarkTheme());
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

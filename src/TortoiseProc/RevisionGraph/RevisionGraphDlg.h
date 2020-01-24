@@ -121,6 +121,7 @@ private:
 	void			UpdateZoomBox();
 
 	bool			UpdateData();
+	void			SetTheme(bool bDark);
 
 	float						m_fZoomFactor;
 	CRevisionGraphWnd			m_Graph;
@@ -130,4 +131,5 @@ private:
 	CString						m_outputPath;
 	ULONG_PTR					m_gdiPlusToken;
 	CComPtr<ITaskbarList3>		m_pTaskbarList;
+	int							m_themeCallbackId;
 };

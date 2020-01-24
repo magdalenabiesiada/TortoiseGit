@@ -23,6 +23,7 @@
 #include "Git.h"
 #include "Settings/SettingGitCredential.h"
 #include "PathUtils.h"
+#include "Theme.h"
 
 #define WM_SETPAGEFOCUS WM_APP+2
 
@@ -211,6 +212,8 @@ BOOL CFirstStartWizardAuthentication::OnInitDialog()
 	//GetDlgItem(IDC_GENERATEPUTTYKEY)->ShowWindow(CAppUtils::IsSSHPutty() ? SW_SHOW : SW_HIDE);
 
 	UpdateData(FALSE);
+
+	CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), CTheme::Instance().IsDarkTheme());
 
 	return TRUE;
 }

@@ -1,4 +1,4 @@
-// TortoiseGit - a Windows shell extension for easy version control
+﻿// TortoiseGit - a Windows shell extension for easy version control
 
 // Copyright (C) 2013 - TortoiseGit
 
@@ -17,7 +17,6 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
 #pragma once
-
 #include "StandAloneDlg.h"
 #include "resource.h"
 
@@ -25,7 +24,7 @@
  * \ingroup TortoiseProc
  * Helper dialog to ask the user for authentication data.
  */
-class CLogOrdering : public CDialog
+class CLogOrdering : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CLogOrdering)
 

@@ -18,11 +18,12 @@
 //
 #pragma once
 #include "SciEdit.h"
+#include "StandAloneDlg.h"
 #include <afxcmn.h>
 
 // CAutoTextTestDlg dialog
 
-class CAutoTextTestDlg : public CDialog
+class CAutoTextTestDlg : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CAutoTextTestDlg)
 

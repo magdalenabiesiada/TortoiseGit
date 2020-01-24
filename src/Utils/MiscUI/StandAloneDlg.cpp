@@ -1,4 +1,4 @@
-// TortoiseGit - a Windows shell extension for easy version control
+﻿// TortoiseGit - a Windows shell extension for easy version control
 
 // Copyright (C) 2013, 2016 - TortoiseGit
 // Copyright (C) 2003-2008,2011 - TortoiseSVN
@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "Resource.h"
 #include "StandAloneDlg.h"
+
+#pragma comment(lib, "Dwmapi.lib")
 
 IMPLEMENT_DYNAMIC(CStandAloneDialog, CStandAloneDialogTmpl<CDialog>)
 CStandAloneDialog::CStandAloneDialog(UINT nIDTemplate, CWnd* pParentWnd /*= nullptr*/)

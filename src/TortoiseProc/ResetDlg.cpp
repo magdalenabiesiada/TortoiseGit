@@ -1,4 +1,4 @@
-// TortoiseGit - a Windows shell extension for easy version control
+﻿// TortoiseGit - a Windows shell extension for easy version control
 
 // Copyright (C) 2008-2017, 2019 - TortoiseGit
 
@@ -93,6 +93,8 @@ BOOL CResetDlg::OnInitDialog()
 	InitChooseVersion();
 	SetDefaultChoose(IDC_RADIO_BRANCH);
 	GetDlgItem(IDC_RADIO_RESET_SOFT + m_ResetType)->SetFocus();
+
+	SetTheme(CTheme::Instance().IsDarkTheme());
 
 	return FALSE;
 }

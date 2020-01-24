@@ -1,4 +1,4 @@
-// TortoiseGitMerge - a Diff/Patch program
+﻿// TortoiseGitMerge - a Diff/Patch program
 
 // Copyright (C) 2011, 2013 - TortoiseSVN
 
@@ -18,11 +18,11 @@
 //
 #pragma once
 #include <afxwin.h>
-
+#include "StandAloneDlg.h"
 
 // CGotoLineDlg dialog
 
-class CGotoLineDlg : public CDialogEx
+class CGotoLineDlg : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CGotoLineDlg)
 

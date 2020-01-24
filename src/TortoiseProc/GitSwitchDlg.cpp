@@ -115,6 +115,8 @@ BOOL CGitSwitchDlg::OnInitDialog()
 	m_tooltips.AddTool(GetDlgItem(IDC_CHECK_TRACK), CString(MAKEINTRESOURCE(IDS_PROC_NEWBRANCHTAG_TRACK_TT)));
 	m_tooltips.Activate(TRUE);
 
+	SetTheme(CTheme::Instance().IsDarkTheme());
+
 	return FALSE;
 }
 // CCreateBranchTagDlg message handlers

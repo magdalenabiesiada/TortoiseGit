@@ -21,6 +21,7 @@
 #include "FirstStartWizard.h"
 #include "FirstStartWizardUser.h"
 #include "Git.h"
+#include "Theme.h"
 
 IMPLEMENT_DYNAMIC(CFirstStartWizardUser, CFirstStartWizardBasePage)
 
@@ -117,6 +118,8 @@ BOOL CFirstStartWizardUser::OnInitDialog()
 	config.GetString(L"user.email", m_sUseremail);
 
 	UpdateData(FALSE);
+
+	CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), CTheme::Instance().IsDarkTheme());
 
 	return TRUE;
 }

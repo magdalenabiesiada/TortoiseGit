@@ -24,6 +24,7 @@
 #include "MessageBox.h"
 #include "GitForWindows.h"
 #include "../../TGitCache/CacheInterface.h"
+#include "Theme.h"
 
 IMPLEMENT_DYNAMIC(CFirstStartWizardGit, CFirstStartWizardBasePage)
 
@@ -147,6 +148,8 @@ BOOL CFirstStartWizardGit::OnInitDialog()
 
 	if (m_sMsysGitPath.IsEmpty())
 		SetTimer(CHECK_NEWGIT_TIMER, 1000, nullptr);
+
+	CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), CTheme::Instance().IsDarkTheme());
 
 	return TRUE;
 }

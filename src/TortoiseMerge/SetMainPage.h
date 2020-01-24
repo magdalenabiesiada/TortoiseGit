@@ -97,4 +97,6 @@ protected:
 
 	CMFCFontComboBox m_cFontNames;
 	CComboBox		m_cFontSizes;
+
+	int				m_themeCallbackId;
 };

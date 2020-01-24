@@ -1,4 +1,4 @@
-// TortoiseGit - a Windows shell extension for easy version control
+﻿// TortoiseGit - a Windows shell extension for easy version control
 
 // Copyright (C) 2016 - TortoiseGit
 // Copyright (C) 2007-2010, 2015 - TortoiseSVN
@@ -21,6 +21,7 @@
 #include "MessageBox.h"
 #include "Tooltip.h"
 #include "CommonDialogFunctions.h"
+#include "Theme.h"
 
 /**
  * \ingroup TortoiseProc
@@ -65,6 +66,7 @@ protected:
 	{
 		CPropertyPage::OnInitDialog();
 		m_tooltips.Create(this);
+		CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), CTheme::Instance().IsDarkTheme());
 		return FALSE;
 	}
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override

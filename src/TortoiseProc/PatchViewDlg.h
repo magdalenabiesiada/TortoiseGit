@@ -17,6 +17,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
 #pragma once
+#include "StandAloneDlg.h"
 #include "SciEdit.h"
 #include "FindBar.h"
 
@@ -28,7 +29,7 @@ public:
 };
 
 // CPatchViewDlg dialog
-class CPatchViewDlg : public CDialog, public CSciEditContextMenuInterface
+class CPatchViewDlg : public CStandAloneDialog, public CSciEditContextMenuInterface
 {
 	DECLARE_DYNAMIC(CPatchViewDlg)
 

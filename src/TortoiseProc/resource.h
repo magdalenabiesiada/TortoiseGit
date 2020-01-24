@@ -1439,6 +1439,7 @@
 #define IDC_GROUP_CHANGELOG             1697
 #define IDC_GROUP_DOWNLOADS             1698
 #define IDC_LOG3                        1698
+#define IDC_DARKTHEME                   1699
 #define IDC_SELECTLABEL                 1700
 #define IDS_ABOUTVERSION                1700
 #define IDC_CHECKALL                    1701
@@ -1478,6 +1479,7 @@
 #define IDC_REV1BTN1                    1729
 #define IDC_CHECK_NORECYCLEBIN          1730
 #define IDC_CHECK_DRYRUN                1731
+#define IDC_DARKTHEMEINFO               1732
 #define IDC_SYMBOLIZEREFNAMES           1733
 #define IDC_CHECK_SUBMODULE_NOFETCH     1734
 #define IDC_CHECK_SUBMODULE_MERGE       1735

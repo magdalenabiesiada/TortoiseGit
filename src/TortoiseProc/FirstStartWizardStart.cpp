@@ -20,6 +20,7 @@
 #include "TortoiseProc.h"
 #include "FirstStartWizard.h"
 #include "FirstStartWizardStart.h"
+#include "Theme.h"
 
 #define WM_SETPAGEFOCUS WM_APP+2
 
@@ -64,6 +65,8 @@ BOOL CFirstStartWizardStart::OnInitDialog()
 	AppendStringResource(hinttext, IDS_FIRSTSTART_HINT3);
 	AppendStringResource(hinttext, IDS_FIRSTSTART_HINT4);
 	GetDlgItem(IDC_FIRSTSTART_HINT)->SetWindowText(hinttext);
+
+	CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), CTheme::Instance().IsDarkTheme());
 
 	return TRUE;
 }

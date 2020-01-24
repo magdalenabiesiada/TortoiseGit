@@ -1,4 +1,4 @@
-// TortoiseGitMerge - a Diff/Patch program
+﻿// TortoiseGitMerge - a Diff/Patch program
 
 // Copyright (C) 2006-2007, 2010, 2013-2014, 2016 - TortoiseSVN
 
@@ -20,6 +20,7 @@
 #include "resource.h"
 #include <afxcmn.h>
 #include "HistoryCombo.h"
+#include "StandAloneDlg.h"
 #include "registry.h"
 
 #define REPLACEMSGSTRINGW  L"TortoiseGitMerge_FindReplace"
@@ -28,7 +29,7 @@
  * \ingroup TortoiseMerge
  * Find dialog used in TortoiseMerge.
  */
-class CFindDlg : public CDialog
+class CFindDlg : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CFindDlg)
 

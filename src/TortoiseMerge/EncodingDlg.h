@@ -1,4 +1,4 @@
-// TortoiseGitMerge - a Diff/Patch program
+﻿// TortoiseGitMerge - a Diff/Patch program
 
 // Copyright (C) 2013 - TortoiseSVN
 
@@ -21,6 +21,7 @@
 #include <afxcmn.h>
 #include "HistoryCombo.h"
 #include "FileTextLines.h"
+#include "StandAloneDlg.h"
 
 extern const CFileTextLines::UnicodeType uctArray[9];
 extern const EOL eolArray[10];
@@ -29,14 +30,14 @@ extern const EOL eolArray[10];
  * \ingroup TortoiseMerge
  * Encoding dialog used in TortoiseMerge.
  */
-class CEncodingDlg : public CDialog
+class CEncodingDlg : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CEncodingDlg)
 
 public:
 	CEncodingDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEncodingDlg();
-	void Create(CWnd* pParent = nullptr) { CDialog::Create(IDD, pParent); ShowWindow(SW_SHOW); UpdateWindow(); }
+	void Create(CWnd* pParent = nullptr) { __super::Create(IDD, pParent); ShowWindow(SW_SHOW); UpdateWindow(); }
 // Dialog Data
 	enum { IDD = IDD_ENCODING };
 

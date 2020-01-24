@@ -103,6 +103,7 @@ BOOL CExportDlg::OnInitDialog()
 	if (!m_pParentWnd && GetExplorerHWND())
 		CenterWindow(CWnd::FromHandle(GetExplorerHWND()));
 	EnableSaveRestore(L"ExportDlg");
+	SetTheme(CTheme::Instance().IsDarkTheme());
 	return TRUE;
 }
 
