@@ -167,7 +167,7 @@ private:
 	}
 
 protected:
-	void SetTheme(bool bDark)
+	virtual void SetTheme(bool bDark)
 	{
 		if (bDark)
 		{

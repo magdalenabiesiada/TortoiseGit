@@ -78,7 +78,7 @@ protected:
 	afx_msg void OnBnClickedButtonEmail();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
+	void SetTheme(bool bDark) override;
 
 	afx_msg LRESULT	OnTaskbarBtnCreated(WPARAM wParam, LPARAM lParam);
 	CComPtr<ITaskbarList3>	m_pTaskbarList;
