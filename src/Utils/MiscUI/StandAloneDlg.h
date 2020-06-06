@@ -167,6 +167,13 @@ private:
 	}
 
 protected:
+	afx_msg void OnSysColorChange()
+	{
+		BaseType::OnSysColorChange();
+		CTheme::Instance().OnSysColorChanged();
+		SetTheme(CTheme::Instance().IsDarkTheme());
+	}
+
 	virtual void SetTheme(bool bDark)
 	{
 		if (bDark)
@@ -358,5 +365,6 @@ BEGIN_TEMPLATE_MESSAGE_MAP(CStandAloneDialogTmpl, BaseType, BaseType)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_REGISTERED_MESSAGE(TaskBarButtonCreated, OnTaskbarButtonCreated)
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 

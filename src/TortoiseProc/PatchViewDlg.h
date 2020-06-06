@@ -59,7 +59,6 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMoving(UINT fwSide, LPRECT pRect);
-	afx_msg void OnSysColorChange();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 

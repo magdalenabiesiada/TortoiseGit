@@ -99,7 +99,6 @@ BEGIN_MESSAGE_MAP(CProgressDlg, CResizableStandAloneDialog)
 	ON_NOTIFY(EN_LINK, IDC_LOG, OnEnLinkLog)
 	ON_EN_VSCROLL(IDC_LOG, OnEnscrollLog)
 	ON_EN_HSCROLL(IDC_LOG, OnEnscrollLog)
-	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 BOOL CProgressDlg::OnInitDialog()
@@ -987,10 +986,4 @@ void CProgressDlg::SetupLogMessageViewControl()
 	}
 	m_Log.SendMessage(EM_SETCHARFORMAT, SCF_ALL, reinterpret_cast<LPARAM>(&format));
 	m_Log.SendMessage(EM_SETBKGNDCOLOR, 0, format.crBackColor);
-}
-
-void CProgressDlg::OnSysColorChange()
-{
-	__super::OnSysColorChange();
-	SetupLogMessageViewControl();
 }

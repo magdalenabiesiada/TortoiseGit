@@ -212,7 +212,6 @@ BEGIN_MESSAGE_MAP(CGitStatusListCtrl, CResizableColumnsListCtrl<CListCtrl>)
 	ON_NOTIFY_REFLECT(NM_RETURN, OnNMReturn)
 	ON_WM_KEYDOWN()
 	ON_WM_PAINT()
-	ON_WM_SYSCOLORCHANGE()
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnBeginDrag)
 END_MESSAGE_MAP()
 
@@ -4611,12 +4610,6 @@ CTGitPath* CGitStatusListCtrl::GetListEntry(int index)
 		return nullptr;
 	}
 	return const_cast<CTGitPath*>(m_arStatusArray[m_arListArray[index]]);
-}
-
-void CGitStatusListCtrl::OnSysColorChange()
-{
-	__super::OnSysColorChange();
-	CTheme::Instance().OnSysColorChanged();
 }
 
 ULONG CGitStatusListCtrl::GetGestureStatus(CPoint /*ptTouch*/)
