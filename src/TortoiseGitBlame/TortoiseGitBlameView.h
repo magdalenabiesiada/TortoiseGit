@@ -187,6 +187,7 @@ public:
 
 	CSciEditBlame		m_TextView;
 	CToolTips			m_ToolTip;
+	CString				m_sLastFilename;
 
 	HINSTANCE hInstance;
 	HINSTANCE hResource;

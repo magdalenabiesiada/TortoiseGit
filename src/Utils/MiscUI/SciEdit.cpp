@@ -997,8 +997,30 @@ void CSciEdit::OnSysColorChange()
 	SetColors(true);
 	if (m_bUDiffmode)
 		SetUDiffStyle();
-	else
-		SetFont(CCommonAppUtils::GetLogFontName(), CCommonAppUtils::GetLogFontSize());
+	else if (!m_bNoAutomaticStyling)
+	{
+		Call(SCI_STYLECLEARALL);
+
+		LPARAM color = GetSysColor(COLOR_HOTLIGHT);
+		// set the styles for the bug ID strings
+		Call(SCI_STYLESETBOLD, STYLE_ISSUEBOLD, TRUE);
+		Call(SCI_STYLESETFORE, STYLE_ISSUEBOLD, color);
+		Call(SCI_STYLESETBOLD, STYLE_ISSUEBOLDITALIC, TRUE);
+		Call(SCI_STYLESETITALIC, STYLE_ISSUEBOLDITALIC, TRUE);
+		Call(SCI_STYLESETFORE, STYLE_ISSUEBOLDITALIC, color);
+		Call(SCI_STYLESETHOTSPOT, STYLE_ISSUEBOLDITALIC, TRUE);
+
+		// set the formatted text styles
+		Call(SCI_STYLESETBOLD, STYLE_BOLD, TRUE);
+		Call(SCI_STYLESETITALIC, STYLE_ITALIC, TRUE);
+		Call(SCI_STYLESETUNDERLINE, STYLE_UNDERLINED, TRUE);
+
+		// set the style for URLs
+		Call(SCI_STYLESETFORE, STYLE_URL, color);
+		Call(SCI_STYLESETHOTSPOT, STYLE_URL, TRUE);
+
+		Call(SCI_SETHOTSPOTACTIVEUNDERLINE, TRUE);
+	}
 }
 
 void CSciEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -1717,7 +1739,7 @@ void CSciEdit::SetAStyle(int style, COLORREF fore, COLORREF back, int size, cons
 		Call(SCI_STYLESETFONT, style, reinterpret_cast<LPARAM>(face));
 }
 
-void CSciEdit::SetUDiffStyle()//TODO
+void CSciEdit::SetUDiffStyle()
 {
 	m_bUDiffmode = true;
 	m_bDoStyle = false;
@@ -1747,7 +1769,7 @@ void CSciEdit::SetUDiffStyle()//TODO
 
 	Call(SCI_CLEARDOCUMENTSTYLE, 0, 0);
 
-	if (CTheme::Instance().IsDarkTheme()|| CTheme::Instance().IsHighContrastModeDark())
+	if (CTheme::Instance().IsDarkTheme())
 	{
 		Call(SCI_STYLESETFORE, STYLE_DEFAULT, UDiffTextColorDark);
 		Call(SCI_STYLESETBACK, STYLE_DEFAULT, UDiffBackColorDark);

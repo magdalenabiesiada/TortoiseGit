@@ -271,6 +271,7 @@ int CTortoiseGitBlameView::OnCreate(LPCREATESTRUCT lpcs)
 		return -1; // fail to create
 	}
 	m_TextView.Init(-1);
+	m_TextView.m_bNoAutomaticStyling = true;
 	m_TextView.ShowWindow( SW_SHOW);
 	CreateFont();
 	m_TextView.SetReadOnly(true);
@@ -595,36 +596,17 @@ LRESULT CTortoiseGitBlameView::SendEditor(UINT Msg, WPARAM wParam, LPARAM lParam
 
 void CTortoiseGitBlameView::SetAStyle(int style, COLORREF fore, COLORREF back, int size, const char *face)
 {
-	if (CTheme::Instance().IsDarkTheme())
-	{
+	if (fore == back && fore == m_windowcolor)
+		fore = m_textcolor;
+	else if (CTheme::Instance().IsDarkTheme())
 		fore = CTheme::Instance().GetThemeColor(fore);
-		if (back == white)
-			back = CTheme::darkBkColor;
-	}
 	m_TextView.SetAStyle(style, fore, back, size, face);
 }
 
 void CTortoiseGitBlameView::InitialiseEditor()
 {
-	// Set up the global default style. These attributes are used wherever no explicit choices are made.
-	std::string fontName = CUnicodeUtils::StdGetUTF8(CRegStdString(L"Software\\TortoiseGit\\BlameFontName", L"Consolas"));
-	SendEditor(SCI_STYLESETSIZE, STYLE_DEFAULT, (DWORD)CRegStdDWORD(L"Software\\TortoiseGit\\BlameFontSize", 10));
-	SendEditor(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(fontName.c_str()));
-
 	SendEditor(SCI_SETTABWIDTH, static_cast<DWORD>(CRegStdDWORD(L"Software\\TortoiseGit\\BlameTabSize", 4)));
-	auto numberOfLines = m_data.GetNumberOfLines();
-	int numDigits = 2;
-	while (numberOfLines)
-	{
-		numberOfLines /= 10;
-		++numDigits;
-	}
-	if (m_bShowLine)
-		SendEditor(SCI_SETMARGINWIDTHN, 0, numDigits * static_cast<int>(SendEditor(SCI_TEXTWIDTH, STYLE_LINENUMBER, reinterpret_cast<LPARAM>("8"))));
-	else
-		SendEditor(SCI_SETMARGINWIDTHN, 0);
-	SendEditor(SCI_SETMARGINWIDTHN, 1);
-	SendEditor(SCI_SETMARGINWIDTHN, 2);
+	OnSciZoom(nullptr, nullptr);
 
 	m_regOldLinesColor = CRegStdDWORD(L"Software\\TortoiseGit\\BlameOldColor", BLAMEOLDCOLOR);
 	m_regNewLinesColor = CRegStdDWORD(L"Software\\TortoiseGit\\BlameNewColor", BLAMENEWCOLOR);
@@ -640,6 +622,45 @@ void CTortoiseGitBlameView::InitialiseEditor()
 		SendEditor(SCI_SETWRAPMODE, SC_WRAP_WORD);
 	else
 		SendEditor(SCI_SETWRAPMODE, SC_WRAP_NONE);
+
+	if (CTheme::Instance().IsDarkTheme())
+	{
+		SendEditor(SCI_SETSELFORE, TRUE, CTheme::Instance().GetThemeColor(RGB(0, 0, 0)));
+		SendEditor(SCI_SETSELBACK, TRUE, CTheme::Instance().GetThemeColor(RGB(51, 153, 255)));
+		SendEditor(SCI_STYLESETFORE, STYLE_DEFAULT, BlameTextColorDark);
+		SendEditor(SCI_STYLESETBACK, STYLE_DEFAULT, BlameBackColorDark);
+		SendEditor(SCI_STYLECLEARALL);
+		SendEditor(SCI_SETCARETFORE, BlameTextColorDark);
+		SendEditor(SCI_SETWHITESPACEFORE, true, RGB(180, 180, 180));
+	}
+	else
+	{
+		SendEditor(SCI_SETSELFORE, TRUE, ::GetSysColor(COLOR_HIGHLIGHTTEXT));
+		SendEditor(SCI_SETSELBACK, TRUE, ::GetSysColor(COLOR_HIGHLIGHT));
+		SendEditor(SCI_STYLESETFORE, STYLE_DEFAULT, ::GetSysColor(COLOR_WINDOWTEXT));
+		SendEditor(SCI_STYLESETBACK, STYLE_DEFAULT, ::GetSysColor(COLOR_WINDOW));
+		SendEditor(SCI_STYLECLEARALL);
+		SendEditor(SCI_SETCARETFORE, ::GetSysColor(COLOR_WINDOWTEXT));
+		SendEditor(SCI_SETWHITESPACEFORE, true, ::GetSysColor(COLOR_3DSHADOW));
+		SendEditor(SCI_SETFOLDMARGINCOLOUR, true, RGB(240, 240, 240));
+		SendEditor(SCI_SETFOLDMARGINHICOLOUR, true, RGB(255, 255, 255));
+		SendEditor(SCI_STYLESETFORE, STYLE_LINENUMBER, RGB(109, 109, 109));
+		SendEditor(SCI_STYLESETBACK, STYLE_LINENUMBER, RGB(230, 230, 230));
+	}
+	SendEditor(SCI_STYLESETFORE, STYLE_BRACELIGHT, RGB(0, 150, 0));
+	SendEditor(SCI_STYLESETBOLD, STYLE_BRACELIGHT, 1);
+	SendEditor(SCI_STYLESETFORE, STYLE_BRACEBAD, RGB(255, 0, 0));
+	SendEditor(SCI_STYLESETBOLD, STYLE_BRACEBAD, 1);
+
+	if (CTheme::Instance().IsDarkTheme() || CTheme::Instance().IsHighContrastModeDark())
+	{
+		SendEditor(SCI_STYLESETFORE, STYLE_LINENUMBER, RGB(140, 140, 140));
+		SendEditor(SCI_STYLESETBACK, STYLE_LINENUMBER, BlameBackColorDark);
+		SendEditor(SCI_SETFOLDMARGINCOLOUR, true, BlameTextColorDark);
+		SendEditor(SCI_SETFOLDMARGINHICOLOUR, true, RGB(0, 0, 0));
+	}
+	if (m_bLexer)
+		SetupLexer(m_sLastFilename);
 }
 
 bool CTortoiseGitBlameView::DoSearch(CTortoiseGitBlameData::SearchDirection direction)
@@ -752,58 +773,9 @@ void CTortoiseGitBlameView::CopyToClipboard()
 
 void CTortoiseGitBlameView::SetTheme(bool bDark)
 {
-	std::wstring fontNameW = CRegStdString(L"Software\\TortoiseGit\\BlameFontName", L"Consolas");
-	std::string fontName = CUnicodeUtils::StdGetUTF8(fontNameW);
 	DarkModeHelper::Instance().AllowDarkModeForWindow(GetSafeHwnd(), bDark);
-	if (bDark)
-	{
-		SetupColoring();
-		SendEditor(SCI_SETSELFORE, TRUE, CTheme::Instance().GetThemeColor(RGB(0, 0, 0)));
-		SendEditor(SCI_SETSELBACK, TRUE, CTheme::Instance().GetThemeColor(RGB(51, 153, 255)));
-	}
-	else
-	{
-		SetupColoring();
-		SendEditor(SCI_SETSELFORE, TRUE, ::GetSysColor(COLOR_HIGHLIGHTTEXT));
-		SendEditor(SCI_SETSELBACK, TRUE, ::GetSysColor(COLOR_HIGHLIGHT));
-	}
-	if (bDark || CTheme::Instance().IsHighContrastModeDark())
-	{
-		for (int c = 0; c <= STYLE_DEFAULT; ++c)
-		{
-			SendEditor(SCI_STYLESETFORE, c, BlameTextColorDark);
-			SendEditor(SCI_STYLESETBACK, c, BlameBackColorDark);
-		}
-		SendEditor(SCI_SETCARETFORE, BlameTextColorDark);
-		SendEditor(SCI_SETWHITESPACEFORE, true, RGB(180, 180, 180));
-		SendEditor(SCI_STYLESETFORE, STYLE_BRACELIGHT, RGB(0, 150, 0));
-		SendEditor(SCI_STYLESETBOLD, STYLE_BRACELIGHT, 1);
-		SendEditor(SCI_STYLESETFORE, STYLE_BRACEBAD, RGB(255, 0, 0));
-		SendEditor(SCI_STYLESETBOLD, STYLE_BRACEBAD, 1);
-		SendEditor(SCI_SETFOLDMARGINCOLOUR, true, BlameTextColorDark);
-		SendEditor(SCI_SETFOLDMARGINHICOLOUR, true, RGB(0, 0, 0));
-		SendEditor(SCI_STYLESETFORE, STYLE_LINENUMBER, RGB(140, 140, 140));
-		SendEditor(SCI_STYLESETBACK, STYLE_LINENUMBER, BlameBackColorDark);
-	}
-	else
-	{
-		for (int c = 0; c <= STYLE_DEFAULT; ++c)
-		{
-			SendEditor(SCI_STYLESETFORE, c, ::GetSysColor(COLOR_WINDOWTEXT));
-			SendEditor(SCI_STYLESETBACK, c, ::GetSysColor(COLOR_WINDOW));
-		}
-		SendEditor(SCI_SETCARETFORE, ::GetSysColor(COLOR_WINDOWTEXT));
-		SendEditor(SCI_SETWHITESPACEFORE, true, ::GetSysColor(COLOR_3DSHADOW));
-		SendEditor(SCI_STYLESETFORE, STYLE_BRACELIGHT, RGB(0, 150, 0));
-		SendEditor(SCI_STYLESETBOLD, STYLE_BRACELIGHT, 1);
-		SendEditor(SCI_STYLESETFORE, STYLE_BRACEBAD, RGB(255, 0, 0));
-		SendEditor(SCI_STYLESETBOLD, STYLE_BRACEBAD, 1);
-		SendEditor(SCI_SETFOLDMARGINCOLOUR, true, RGB(240, 240, 240));
-		SendEditor(SCI_SETFOLDMARGINHICOLOUR, true, RGB(255, 255, 255));
-		SendEditor(SCI_STYLESETFORE, STYLE_LINENUMBER, RGB(109, 109, 109));
-		SendEditor(SCI_STYLESETBACK, STYLE_LINENUMBER, RGB(230, 230, 230));
-	}
-
+	SetupColoring();
+	InitialiseEditor();
 
 	CMFCVisualManager::GetInstance()->OnUpdateSystemColors();
 	CMFCVisualManager::RedrawAll();
@@ -1573,6 +1545,12 @@ void CTortoiseGitBlameView::UpdateInfo(int Encode)
 {
 	CreateFont();
 
+	// Set up the global default style. These attributes are used wherever no explicit choices are made.
+	std::string fontName = CUnicodeUtils::StdGetUTF8(CRegStdString(L"Software\\TortoiseGit\\BlameFontName", L"Consolas"));
+	SendEditor(SCI_STYLESETSIZE, STYLE_DEFAULT, (DWORD)CRegStdDWORD(L"Software\\TortoiseGit\\BlameFontSize", 10));
+	SendEditor(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(fontName.c_str()));
+	SendEditor(SCI_STYLECLEARALL);
+
 	InitialiseEditor();
 	m_TextView.SetReadOnly(false);
 	SendEditor(SCI_CLEARALL);
@@ -1655,7 +1633,8 @@ void CTortoiseGitBlameView::UpdateInfo(int Encode)
 
 	//SendEditor(SCI_REPLACESEL, 0, (LPARAM)(LPCSTR)(m_Buffer + bomoffset));
 #endif
-	SetupLexer(GetDocument()->m_CurrentFileName);
+	m_sLastFilename = GetDocument()->m_CurrentFileName;
+	SetupLexer(m_sLastFilename);
 
 	SendEditor(SCI_GOTOPOS, 0);
 	// set max scroll width, based on textwidth of longest line (heuristic, only works for monospace font)
@@ -1712,17 +1691,18 @@ COLORREF CTortoiseGitBlameView::GetLineColor(size_t line)
 
 void CTortoiseGitBlameView::SetupColoring()
 {
-	m_windowcolor = CTheme::Instance().GetThemeColor(GetSysColor(COLOR_WINDOW));
-	m_textcolor = CTheme::Instance().GetThemeColor(GetSysColor(COLOR_WINDOWTEXT));
-
-	if (CTheme::Instance().IsDarkTheme() || CTheme::Instance().IsHighContrastModeDark())
+	if (CTheme::Instance().IsDarkTheme())
 	{
+		m_windowcolor = CTheme::darkBkColor;
+		m_textcolor = CTheme::darkTextColor;
 		m_texthighlightcolor = m_textcolor;
 		m_selectedrevcolor = RGB(0, 30, 80);
 		m_selectedauthorcolor = InterColor(m_selectedrevcolor, m_texthighlightcolor, 15);
 	}
 	else
 	{
+		m_windowcolor = GetSysColor(COLOR_WINDOW);
+		m_textcolor = GetSysColor(COLOR_WINDOWTEXT);
 		m_texthighlightcolor = GetSysColor(COLOR_HIGHLIGHTTEXT);
 		m_selectedrevcolor = GetSysColor(COLOR_HIGHLIGHT);
 		m_selectedauthorcolor = InterColor(m_selectedrevcolor, m_texthighlightcolor, 35);
@@ -1788,7 +1768,19 @@ void CTortoiseGitBlameView::OnLButtonDown(UINT nFlags,CPoint point)
 
 void CTortoiseGitBlameView::OnSciZoom(NMHDR* /*hdr*/, LRESULT* /*result*/)
 {
-	InitialiseEditor();
+	auto numberOfLines = m_data.GetNumberOfLines();
+	int numDigits = 2;
+	while (numberOfLines)
+	{
+		numberOfLines /= 10;
+		++numDigits;
+	}
+	if (m_bShowLine)
+		SendEditor(SCI_SETMARGINWIDTHN, 0, numDigits * static_cast<int>(SendEditor(SCI_TEXTWIDTH, STYLE_LINENUMBER, reinterpret_cast<LPARAM>("8"))));
+	else
+		SendEditor(SCI_SETMARGINWIDTHN, 0);
+	SendEditor(SCI_SETMARGINWIDTHN, 1);
+	SendEditor(SCI_SETMARGINWIDTHN, 2);
 	Invalidate();
 }
 
@@ -2238,7 +2230,6 @@ void CTortoiseGitBlameView::OnViewToggleLexer()
 
 	SendEditor(SCI_CLEARDOCUMENTSTYLE, 0, 0);
 	SetupLexer(GetDocument()->m_CurrentFileName);
-	SendEditor(SCI_COLOURISE, 0, -1);
 }
 
 void CTortoiseGitBlameView::OnUpdateViewToggleLexer(CCmdUI *pCmdUI)
@@ -2305,7 +2296,6 @@ void CTortoiseGitBlameView::OnSysColorChange()
 {
 	__super::OnSysColorChange();
 	CTheme::Instance().OnSysColorChanged();
-	//CTheme::Instance().SetDarkTheme(CTheme::Instance().IsDarkTheme(), true);
 	SetTheme(CTheme::Instance().IsDarkTheme());
 }
 

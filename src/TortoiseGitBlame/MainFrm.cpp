@@ -170,9 +170,6 @@ void CMainFrame::SetTheme(bool bDark)
 		DarkModeHelper::Instance().RefreshImmersiveColorPolicyState();
 		BOOL dark = TRUE;
 		DwmSetWindowAttribute(GetSafeHwnd(), 19, &dark, sizeof(dark));
-
-		// this is not ideal, but the office2007 black theme is better than
-		// implementing a custom status bar with proper dark theme colors...
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CThemeMFCVisualManager));
 	}
 	else
@@ -185,7 +182,6 @@ void CMainFrame::SetTheme(bool bDark)
 		DarkModeHelper::Instance().RefreshImmersiveColorPolicyState();
 		DarkModeHelper::Instance().AllowDarkModeForApp(FALSE);
 		SetClassLongPtr(GetSafeHwnd(), GCLP_HBRBACKGROUND, reinterpret_cast<LONG_PTR>(GetSysColorBrush(COLOR_3DFACE)));
-
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
 	}
 	CTheme::Instance().SetThemeForDialog(GetSafeHwnd(), bDark);
