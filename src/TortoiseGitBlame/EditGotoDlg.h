@@ -1,4 +1,4 @@
-// TortoiseGit - a Windows shell extension for easy version control
+﻿// TortoiseGit - a Windows shell extension for easy version control
 
 // Copyright (C) 2008-2011, 2016-2017 - TortoiseGit
 
@@ -18,11 +18,11 @@
 //
 
 #pragma once
-
+#include "StandAloneDlg.h"
 
 // CEditGotoDlg dialog
 
-class CEditGotoDlg : public CDialog
+class CEditGotoDlg : public CStandAloneDialog
 {
 	DECLARE_DYNAMIC(CEditGotoDlg)
 

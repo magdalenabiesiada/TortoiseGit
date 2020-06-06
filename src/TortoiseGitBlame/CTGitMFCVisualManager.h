@@ -1,6 +1,6 @@
 ﻿// TortoiseGit - a Windows shell extension for easy version control
 
-// Copyright (C) 2008-2011, 2016 - TortoiseGit
+// Copyright (C) 2020 - TortoiseGit
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,39 +17,18 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
 
-// EditGoto.cpp : implementation file
-//
+#pragma once
 
-#include "stdafx.h"
-#include "TortoiseGitBlame.h"
-#include "EditGotoDlg.h"
-
-
-// CEditGotoDlg dialog
-
-IMPLEMENT_DYNAMIC(CEditGotoDlg, CStandAloneDialog)
-
-CEditGotoDlg::CEditGotoDlg(CWnd* pParent /*=nullptr*/)
-	: CStandAloneDialog(CEditGotoDlg::IDD, pParent)
-	, m_LineNumber(0)
+class CTGitMFCVisualManager : public CMFCVisualManagerOffice2007
 {
-}
+public:
+	CTGitMFCVisualManager();
+	virtual ~CTGitMFCVisualManager();
+	DECLARE_DYNCREATE(CTGitMFCVisualManager)
 
-CEditGotoDlg::~CEditGotoDlg()
-{
-}
-
-void CEditGotoDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CStandAloneDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_LINENUMBER, m_LineNumber);
-	DDV_MinMaxUInt(pDX, m_LineNumber, 0, 40000000);
-}
-
-
-BEGIN_MESSAGE_MAP(CEditGotoDlg, CStandAloneDialog)
-
-END_MESSAGE_MAP()
-
-
-// CEditGotoDlg message handlers
+	virtual void OnUpdateSystemColors() override;
+	virtual void OnFillBarBackground(CDC* pDC, CBasePane* pBar, CRect rectClient, CRect rectClip, BOOL bNCArea = FALSE);
+	virtual BOOL IsOwnerDrawMenuCheck();
+	virtual void OnDrawMenuCheck(CDC* pDC, CMFCToolBarMenuButton* pButton, CRect rect, BOOL bHighlight, BOOL bIsRadio);
+	virtual void OnHighlightMenuItem(CDC* pDC, CMFCToolBarMenuButton* pButton, CRect rect, COLORREF& clrText);
+};
