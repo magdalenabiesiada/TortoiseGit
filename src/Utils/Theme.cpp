@@ -265,7 +265,8 @@ BOOL CTheme::AdjustThemeForChildrenProc(HWND hwnd, LPARAM lParam)
 		else if (wcscmp(szWndClassName, PROGRESS_CLASS) == 0)
 		{
 			SetWindowTheme(hwnd, L"", L"");
-			SendMessage(hwnd, PBM_SETBKCOLOR, 0, darkBkColor);
+			// TGit: Keep border of progress bar
+			//SendMessage(hwnd, PBM_SETBKCOLOR, 0, darkBkColor);
 			SendMessage(hwnd, PBM_SETBARCOLOR, 0, RGB(50, 50, 180));
 		}
 		else if (wcscmp(szWndClassName, L"Auto-Suggest Dropdown") == 0)
