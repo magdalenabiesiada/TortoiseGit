@@ -26,7 +26,7 @@
 #include "MenuEncode.h"
 #include "MainFrm.h"
 #include "TaskbarUUID.h"
-#include "CTGitMFCVisualManager.h"
+#include "ThemeMFCVisualManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -173,7 +173,7 @@ void CMainFrame::SetTheme(bool bDark)
 
 		// this is not ideal, but the office2007 black theme is better than
 		// implementing a custom status bar with proper dark theme colors...
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CTGitMFCVisualManager));
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CThemeMFCVisualManager));
 	}
 	else
 	{
